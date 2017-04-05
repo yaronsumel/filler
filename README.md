@@ -7,10 +7,9 @@ Installation
 $ go get github.com/yaronsumel/filler
 ```
 
-Usage
+[Usage](https://github.com/yaronsumel/filler/blob/master/example/example.go)
 ------
 
-###### [Working Example](https://github.com/yaronsumel/filler/blob/master/example/example.go)
 ```go
 package main
 
