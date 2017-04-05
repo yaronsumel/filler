@@ -2,6 +2,7 @@ package filler
 
 import (
 	"testing"
+	"errors"
 )
 
 var demoFiller = Filler{
@@ -11,9 +12,19 @@ var demoFiller = Filler{
 	},
 }
 
+var errDemoFiller = Filler{
+	Tag: "demoFiller1",
+	Fn: func(obj interface{}) (interface{}, error) {
+		return nil, errors.New("some error")
+	},
+}
+
+
 type demoStruct struct {
-	Name string `fill:"demoFiller1"`
+	Name string `fill:"demoFiller1:Val"`
 	Val  string `fill:"demoFiller2"`
+	Ignore1  string `fill:"-"`
+	Ignore2  string `fill:""`
 }
 
 // RegFiller - register new filler into []fillers
@@ -29,6 +40,7 @@ func TestRegFiller(t *testing.T) {
 // Fill - fill the object with all the current fillers
 func TestFill(t *testing.T) {
 	RegFiller(demoFiller)
+	RegFiller(errDemoFiller)
 	m := demoStruct{
 		Name: "nameVal",
 		Val:  "valVal",
