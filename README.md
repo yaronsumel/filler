@@ -10,25 +10,32 @@ $ go get github.com/yaronsumel/filler
 Usage
 ------
 
+##### fill tag
+
+###### `fill:"[FillerName:OptionalValue]"`
+###### `fill:"[User:UserId]"` - Fill current filed with the "User" Filler and UserId value
+###### `fill:"[SayHello]"` = Fill current with "SayHello" Filler Without any value 
+
+
 ###### Add the `fill` tag in your model
 ```go
 type Model struct {
-	UserId   bson.ObjectId `json:"userId" bson:"userId"`
-	FieldA   string        `json:"FieldA" bson:"FieldA" fill:"SayHello"`
-	UserName string        `json:"user" bson:"-" fill:"User:UserId"`
+	UserId   bson.ObjectId 
+	FieldA   string        `fill:"SayHelloFiller"`
+	UserName string        `fill:"UserNameFiller:UserId"`
 }
 ```
 ###### Register the fillers
 ```go
 	filler.RegFiller(filler.Filler{
-		Tag: "User",
+		Tag: "UserNameFiller",
 		Fn: func(value interface{}) (interface{}, error) {
 			return "this is the user name", nil
 		},
 	})
 
 	filler.RegFiller(filler.Filler{
-		Tag: "SayHello",
+		Tag: "SayHelloFiller",
 		Fn: func(value interface{}) (interface{}, error) {
 			return "Hello", nil
 		},
