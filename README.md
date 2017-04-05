@@ -10,11 +10,11 @@ $ go get github.com/yaronsumel/filler
 Usage
 ------
 
-tag structure
-------
-`fill:"[FillerName:OptionalValue]"`
-`fill:"[User:UserId]"` = call to User-Filler Fn with the value of UserId 
-`fill:"[SayHello]"` = call to SayHello-Filler Fn Without any value 
+##### fill tag
+
+###### `fill:"[FillerName:OptionalValue]"`
+###### `fill:"[User:UserId]"` - Fill current filed with the "User" Filler and UserId value
+###### `fill:"[SayHello]"` = Fill current with "SayHello" Filler Without any value 
 
 
 ###### Add the `fill` tag in your model
