@@ -1,4 +1,4 @@
-# filler [![Go Report Card](https://goreportcard.com/badge/github.com/yaronsumel/piper)](https://goreportcard.com/report/github.com/yaronsumel/piper) [![GoDoc](https://godoc.org/github.com/yaronsumel/piper?status.svg)](https://godoc.org/github.com/yaronsumel/piper)
+# filler [![Go Report Card](https://goreportcard.com/badge/github.com/yaronsumel/filler)](https://goreportcard.com/report/github.com/yaronsumel/filler) [![GoDoc](https://godoc.org/github.com/yaronsumel/filler?status.svg)](https://godoc.org/github.com/yaronsumel/filler)
 ###### small util to fill gaps in your structs 
 
 Installation
@@ -30,7 +30,7 @@ type Model struct {
 	filler.RegFiller(filler.Filler{
 		Tag: "SayHello",
 		Fn: func(value interface{}) (interface{}, error) {
-			return "this is the user name", nil
+			return "Hello", nil
 		},
 	})
 ```
