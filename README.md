@@ -21,21 +21,21 @@ Usage
 ```go
 type Model struct {
 	UserId   bson.ObjectId 
-	FieldA   string        `fill:"SayHello"`
-	UserName string        `fill:"User:UserId"`
+	FieldA   string        `fill:"SayHelloFiller"`
+	UserName string        `fill:"UserNameFiller:UserId"`
 }
 ```
 ###### Register the fillers
 ```go
 	filler.RegFiller(filler.Filler{
-		Tag: "User",
+		Tag: "UserNameFiller",
 		Fn: func(value interface{}) (interface{}, error) {
 			return "this is the user name", nil
 		},
 	})
 
 	filler.RegFiller(filler.Filler{
-		Tag: "SayHello",
+		Tag: "SayHelloFiller",
 		Fn: func(value interface{}) (interface{}, error) {
 			return "Hello", nil
 		},
