@@ -30,7 +30,8 @@ func Fill(obj interface{}) {
 	v := reflect.TypeOf(obj).Elem()
 	s := reflect.ValueOf(obj).Elem()
 	for i := 0; i < v.NumField(); i++ {
-		tag := v.Field(i).Tag.Get(tagName)
+		currentField := v.Field(i)
+		tag := currentField.Tag.Get(tagName)
 		if tag == emptyTag || tag == ignoreTag {
 			continue
 		}
@@ -45,7 +46,9 @@ func Fill(obj interface{}) {
 				if err != nil {
 					continue
 				}
-				s.FieldByName(v.Field(i).Name).Set(reflect.ValueOf(res))
+				if s.FieldByName(currentField.Name).CanSet(){
+					s.FieldByName(currentField.Name).Set(reflect.ValueOf(res))
+				}
 			}
 		}
 	}
