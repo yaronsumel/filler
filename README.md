@@ -1,4 +1,4 @@
-# filler [![Go Report Card](https://goreportcard.com/badge/github.com/yaronsumel/filler)](https://goreportcard.com/report/github.com/yaronsumel/filler) [![GoDoc](https://godoc.org/github.com/yaronsumel/filler?status.svg)](https://godoc.org/github.com/yaronsumel/filler)
+# filler [![Go Report Card](https://goreportcard.com/badge/github.com/yaronsumel/filler)](https://goreportcard.com/report/github.com/yaronsumel/filler) [![Build Status](https://travis-ci.org/yaronsumel/grapes.svg?branch=master)](https://travis-ci.org/yaronsumel/grapes) [![GoDoc](https://godoc.org/github.com/yaronsumel/filler?status.svg)](https://godoc.org/github.com/yaronsumel/filler)
 ###### small util to fill gaps in your structs 
 
 Installation
@@ -44,12 +44,7 @@ type Model struct {
 
 ###### and Fill
 ```go
-	m := Model{}
 	filler.Fill(&m)
 ```
-
-TBD
-------
-* testing
 
 > ##### Written and Maintained by [@YaronSumel](https://twitter.com/yaronsumel) #####
