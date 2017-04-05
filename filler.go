@@ -14,6 +14,7 @@ const (
 
 var fillers []Filler
 
+// Filler instance
 type Filler struct {
 	// Tag is the prefix inside fill tag ie. "fill:mytag"
 	Tag string
@@ -41,7 +42,7 @@ func Fill(obj interface{}) {
 		}
 		t, elm := parseTag(tag)
 		for _, filter := range fillers {
-			var elmValue interface{} = nil
+			var elmValue interface{}
 			if filter.Tag == t {
 				if elm != "" {
 					elmValue = s.FieldByName(elm).Interface()
