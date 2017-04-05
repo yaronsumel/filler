@@ -15,7 +15,7 @@ Usage
 type Model struct {
 	UserId   bson.ObjectId `json:"userId" bson:"userId"`
 	FieldA   string        `json:"FieldA" bson:"FieldA" fill:"SayHello"`
-	UserName string        `json:"user" bson:"-" fill:"User:userId"`
+	UserName string        `json:"user" bson:"-" fill:"User:UserId"`
 }
 ```
 ###### Register the fillers
