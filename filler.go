@@ -3,6 +3,7 @@ package filler
 import (
 	"reflect"
 	"strings"
+	"log"
 )
 
 const (
@@ -27,6 +28,9 @@ func RegFiller(f Filler) {
 
 // Fill - fill the object with all the current fillers
 func Fill(obj interface{}) {
+	if reflect.TypeOf(obj).Kind() != reflect.Ptr {
+		log.Panic("panic at [yaronsumel/filler] : obj kind passed to Fill should be Ptr")
+	}
 	v := reflect.TypeOf(obj).Elem()
 	s := reflect.ValueOf(obj).Elem()
 	for i := 0; i < v.NumField(); i++ {
@@ -46,7 +50,7 @@ func Fill(obj interface{}) {
 				if err != nil {
 					continue
 				}
-				if s.FieldByName(currentField.Name).CanSet(){
+				if s.FieldByName(currentField.Name).CanSet() {
 					s.FieldByName(currentField.Name).Set(reflect.ValueOf(res))
 				}
 			}
