@@ -1,8 +1,8 @@
 package filler
 
 import (
-	"testing"
 	"errors"
+	"testing"
 )
 
 var demoFiller = Filler{
@@ -19,12 +19,11 @@ var errDemoFiller = Filler{
 	},
 }
 
-
 type demoStruct struct {
-	Name string `fill:"demoFiller1:Val"`
-	Val  string `fill:"demoFiller2"`
-	Ignore1  string `fill:"-"`
-	Ignore2  string `fill:""`
+	Name    string `fill:"demoFiller1:Val"`
+	Val     string `fill:"demoFiller2"`
+	Ignore1 string `fill:"-"`
+	Ignore2 string `fill:""`
 }
 
 // RegFiller - register new filler into []fillers
