@@ -1,9 +1,9 @@
 package filler
 
 import (
+	"log"
 	"reflect"
 	"strings"
-	"log"
 )
 
 const (
