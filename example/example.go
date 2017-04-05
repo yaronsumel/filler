@@ -7,7 +7,7 @@ import (
 
 type model struct {
 	UserID   string
-	UserName string `fill:"UserNameFiller:UserId"`
+	UserName string `fill:"UserNameFiller:UserID"`
 }
 
 func init() {
