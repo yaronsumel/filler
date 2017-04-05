@@ -10,6 +10,13 @@ $ go get github.com/yaronsumel/filler
 Usage
 ------
 
+tag structure
+------
+`fill:"[FillerName:OptionalValue]"`
+`fill:"[User:UserId]"` = call to User-Filler Fn with the value of UserId 
+`fill:"[SayHello]"` = call to SayHello-Filler Fn Without any value 
+
+
 ###### Add the `fill` tag in your model
 ```go
 type Model struct {
