@@ -10,12 +10,12 @@ $ go get github.com/yaronsumel/filler
 Usage
 ------
 
-###### Add tag in your model
+###### Add the `fill` tag in your model
 ```go
 type Model struct {
 	UserId   bson.ObjectId `json:"userId" bson:"userId"`
 	FieldA   string        `json:"FieldA" bson:"FieldA" fill:"SayHello"`
-  UserName string        `json:"user" bson:"-" fill:"User:userId"`
+	UserName string        `json:"user" bson:"-" fill:"User:userId"`
 }
 ```
 ###### Register the fillers
