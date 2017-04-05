@@ -1,27 +1,27 @@
 package main
 
 import (
-	"github.com/yaronsumel/filler"
 	"fmt"
+	"github.com/yaronsumel/filler"
 )
 
-type Model struct {
-	UserId   string
-	UserName string        `fill:"UserNameFiller:UserId"`
+type model struct {
+	UserID   string
+	UserName string `fill:"UserNameFiller:UserId"`
 }
 
-func init(){
+func init() {
 	filler.RegFiller(filler.Filler{
 		Tag: "UserNameFiller",
 		Fn: func(value interface{}) (interface{}, error) {
-			return "UserId"+value.(string), nil
+			return "UserId" + value.(string), nil
 		},
 	})
 }
 
 func main() {
-	m := &Model{
-		UserId:"123",
+	m := &model{
+		UserID: "123",
 	}
 	fmt.Printf("%+v\n", m)
 	// should print `&{UserId:123 UserName:}`
