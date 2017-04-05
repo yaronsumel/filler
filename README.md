@@ -44,12 +44,7 @@ type Model struct {
 
 ###### and Fill
 ```go
-	m := Model{}
 	filler.Fill(&m)
 ```
-
-TBD
-------
-* testing
 
 > ##### Written and Maintained by [@YaronSumel](https://twitter.com/yaronsumel) #####
