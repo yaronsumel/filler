@@ -7,46 +7,44 @@ Installation
 $ go get github.com/yaronsumel/filler
 ```
 
-[Working Example](https://github.com/yaronsumel/filler/blob/master/example/example.go)
-
-Usage
+[Usage](https://github.com/yaronsumel/filler/blob/master/example/example.go)
 ------
 
-##### fill tag
-
-###### `fill:"[FillerName:OptionalValue]"`
-###### `fill:"[User:UserId]"` - Fill current filed with the "User" Filler and UserId value
-###### `fill:"[SayHello]"` = Fill current with "SayHello" Filler Without any value 
-
-
-###### Add the `fill` tag in your model
 ```go
-type Model struct {
-	UserId   bson.ObjectId 
-	FieldA   string        `fill:"SayHelloFiller"`
-	UserName string        `fill:"UserNameFiller:UserId"`
+package main
+
+import (
+	"fmt"
+	"github.com/yaronsumel/filler"
+)
+
+type model struct {
+	UserID   string
+	// will pass the UserID val into UserNameFiller Fn
+	UserName string `fill:"UserNameFiller:UserID"`
 }
-```
-###### Register the fillers
-```go
+
+func init() {
+	// register the filler
 	filler.RegFiller(filler.Filler{
 		Tag: "UserNameFiller",
 		Fn: func(value interface{}) (interface{}, error) {
-			return "this is the user name", nil
+			return "UserId" + value.(string), nil
 		},
 	})
+}
 
-	filler.RegFiller(filler.Filler{
-		Tag: "SayHelloFiller",
-		Fn: func(value interface{}) (interface{}, error) {
-			return "Hello", nil
-		},
-	})
-```
+func main() {
+	m := &model{
+		UserID: "123",
+	}
+	fmt.Printf("%+v\n", m)
+	// should print `&{UserId:123 UserName:}`
+	filler.Fill(m)
+	// should print `&{UserId:123 UserName:UserId123}`
+	fmt.Printf("%+v\n", m)
+}
 
-###### and Fill
-```go
-	filler.Fill(&m)
 ```
 
 > ##### Written and Maintained by [@YaronSumel](https://twitter.com/yaronsumel) #####
