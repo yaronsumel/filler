@@ -13,7 +13,7 @@ var demoFiller = Filler{
 }
 
 var errDemoFiller = Filler{
-	Tag: "demoFiller1",
+	Tag: "demoFillerErr",
 	Fn: func(obj interface{}) (interface{}, error) {
 		return nil, errors.New("some error")
 	},
@@ -24,6 +24,14 @@ type demoStruct struct {
 	Val     string `fill:"demoFiller2"`
 	Ignore1 string `fill:"-"`
 	Ignore2 string `fill:""`
+}
+
+type notSameTypeStruct struct {
+	Val int `fill:"demoFiller1"`
+}
+
+type errFromFn struct {
+	Val int `fill:"demoFillerErr"`
 }
 
 // RegFiller - register new filler into []fillers
@@ -44,20 +52,22 @@ func TestFill(t *testing.T) {
 		Name: "nameVal",
 		Val:  "valVal",
 	}
-	// check non ptr - should panic
-	func() {
-		defer func() {
-			if err := recover(); err != nil {
-				return
-			}
-		}()
-		Fill(m)
+	// check non ptr - should return error
+	if err := Fill(m); err == nil {
 		t.FailNow()
-	}()
+	}
 	// check if got filled
 	Fill(&m)
 	// should be filled
 	if m.Name != "hello" || m.Val != "valVal" {
+		t.FailNow()
+	}
+	m2 := notSameTypeStruct{}
+	if err := Fill(&m2); err == nil {
+		t.FailNow()
+	}
+	m3 := errFromFn{}
+	if err := Fill(&m3); err == nil {
 		t.FailNow()
 	}
 }

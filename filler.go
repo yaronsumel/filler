@@ -1,7 +1,7 @@
 package filler
 
 import (
-	"log"
+	"errors"
 	"reflect"
 	"strings"
 )
@@ -28,9 +28,9 @@ func RegFiller(f Filler) {
 }
 
 // Fill - fill the object with all the current fillers
-func Fill(obj interface{}) {
+func Fill(obj interface{}) error {
 	if reflect.TypeOf(obj).Kind() != reflect.Ptr {
-		log.Panic("panic at [yaronsumel/filler] : obj kind passed to Fill should be Ptr")
+		return errors.New("[yaronsumel/filler]: obj kind passed to Fill should be Ptr")
 	}
 	v := reflect.TypeOf(obj).Elem()
 	s := reflect.ValueOf(obj).Elem()
@@ -49,14 +49,18 @@ func Fill(obj interface{}) {
 				}
 				res, err := filter.Fn(elmValue)
 				if err != nil {
-					continue
+					return err
 				}
-				if s.FieldByName(currentField.Name).CanSet() {
-					s.FieldByName(currentField.Name).Set(reflect.ValueOf(res))
+				resVal := reflect.ValueOf(res)
+				// return err if can not Set or not same Kind
+				if !s.FieldByName(currentField.Name).CanSet() || resVal.Kind() != s.FieldByName(currentField.Name).Kind() {
+					return errors.New("[yaronsumel/filler]: Could not set value from Fn")
 				}
+				s.FieldByName(currentField.Name).Set(resVal)
 			}
 		}
 	}
+	return nil
 }
 
 // parseTag split the string by ":" and return two strings
