@@ -2,8 +2,13 @@ package filler
 
 import (
 	"errors"
+	"github.com/golang/groupcache/singleflight"
+	"github.com/mitchellh/hashstructure"
 	"reflect"
+	"strconv"
 	"strings"
+	"sync"
+	"time"
 )
 
 const (
@@ -12,7 +17,8 @@ const (
 	emptyTag  = ""
 )
 
-var fillers []Filler
+var fillers []*Filler
+var mu sync.Mutex
 
 // Filler instance
 type Filler struct {
@@ -20,11 +26,16 @@ type Filler struct {
 	Tag string
 	// Fn function to call - helps us to fill the gaps
 	Fn func(obj interface{}) (interface{}, error)
+	// duplicate function call suppression
+	singleFlightGroup singleflight.Group
 }
 
 // RegFiller - register new filler into []fillers
 func RegFiller(f Filler) {
-	fillers = append(fillers, f)
+	mu.Lock()
+	f.singleFlightGroup = singleflight.Group{}
+	fillers = append(fillers, &f)
+	mu.Unlock()
 }
 
 // Fill - fill the object with all the current fillers
@@ -41,13 +52,16 @@ func Fill(obj interface{}) error {
 			continue
 		}
 		t, elm := parseTag(tag)
-		for _, filter := range fillers {
+		for key, filler := range fillers {
 			var elmValue interface{}
-			if filter.Tag == t {
+			if filler.Tag == t {
 				if elm != "" {
 					elmValue = s.FieldByName(elm).Interface()
 				}
-				res, err := filter.Fn(elmValue)
+				// if fill got called more than once - will get called once per fillerTag+value
+				res, err := fillers[key].singleFlightGroup.Do(filler.Tag+hash(elmValue), func() (interface{}, error) {
+					return filler.Fn(elmValue)
+				})
 				if err != nil {
 					return err
 				}
@@ -61,6 +75,14 @@ func Fill(obj interface{}) error {
 		}
 	}
 	return nil
+}
+
+func hash(x interface{}) string {
+	hash, err := hashstructure.Hash(x, nil)
+	if err != nil {
+		return strconv.FormatInt(int64(time.Now().Nanosecond()), 10)
+	}
+	return strconv.FormatUint(hash, 10)
 }
 
 // parseTag split the string by ":" and return two strings
