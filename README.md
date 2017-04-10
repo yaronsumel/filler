@@ -20,17 +20,12 @@ import (
 
 type model struct {
 	UserID   string
-	// will pass the UserID val into UserNameFiller Fn
 	UserName string `fill:"UserNameFiller:UserID"`
 }
 
 func init() {
-	// register the filler
-	filler.RegFiller(filler.Filler{
-		Tag: "UserNameFiller",
-		Fn: func(value interface{}) (interface{}, error) {
-			return "UserId" + value.(string), nil
-		},
+	filler.RegFiller("UserNameFiller", func(value interface{}) (interface{}, error) {
+		return "UserId" + value.(string), nil
 	})
 }
 
@@ -44,6 +39,7 @@ func main() {
 	// should print `&{UserId:123 UserName:UserId123}`
 	fmt.Printf("%+v\n", m)
 }
+
 
 ```
 

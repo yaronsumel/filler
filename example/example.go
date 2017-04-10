@@ -11,11 +11,8 @@ type model struct {
 }
 
 func init() {
-	filler.RegFiller(filler.Filler{
-		Tag: "UserNameFiller",
-		Fn: func(value interface{}) (interface{}, error) {
-			return "UserId" + value.(string), nil
-		},
+	filler.RegFiller("UserNameFiller", func(value interface{}) (interface{}, error) {
+		return "UserId" + value.(string), nil
 	})
 }
 

@@ -17,24 +17,27 @@ const (
 	emptyTag  = ""
 )
 
-var fillers []*Filler
+var fillers []*filler
 var mu sync.Mutex
 
 // Filler instance
-type Filler struct {
+type filler struct {
 	// Tag is the prefix inside fill tag ie. "fill:mytag"
-	Tag string
+	tag string
 	// Fn function to call - helps us to fill the gaps
-	Fn func(obj interface{}) (interface{}, error)
+	fn func(obj interface{}) (interface{}, error)
 	// duplicate function call suppression
 	singleFlightGroup singleflight.Group
 }
 
 // RegFiller - register new filler into []fillers
-func RegFiller(f Filler) {
+func RegFiller(name string,fn func(obj interface{}) (interface{}, error)) {
 	mu.Lock()
-	f.singleFlightGroup = singleflight.Group{}
-	fillers = append(fillers, &f)
+	fillers = append(fillers, &filler{
+		name,
+		fn,
+		singleflight.Group{},
+	})
 	mu.Unlock()
 }
 
@@ -54,13 +57,13 @@ func Fill(obj interface{}) error {
 		t, elm := parseTag(tag)
 		for key, filler := range fillers {
 			var elmValue interface{}
-			if filler.Tag == t {
+			if filler.tag == t {
 				if elm != "" {
 					elmValue = s.FieldByName(elm).Interface()
 				}
 				// if fill got called more than once - will get called once per fillerTag+value
-				res, err := fillers[key].singleFlightGroup.Do(filler.Tag+hash(elmValue), func() (interface{}, error) {
-					return filler.Fn(elmValue)
+				res, err := fillers[key].singleFlightGroup.Do(hash(filler.tag,elmValue), func() (interface{}, error) {
+					return filler.fn(elmValue)
 				})
 				if err != nil {
 					return err
@@ -77,12 +80,12 @@ func Fill(obj interface{}) error {
 	return nil
 }
 
-func hash(x interface{}) string {
-	hash, err := hashstructure.Hash(x, nil)
+func hash(name string,value interface{}) string {
+	hash, err := hashstructure.Hash(value, nil)
 	if err != nil {
-		return strconv.FormatInt(int64(time.Now().Nanosecond()), 10)
+		return name + strconv.FormatInt(int64(time.Now().Nanosecond()), 10)
 	}
-	return strconv.FormatUint(hash, 10)
+	return name + strconv.FormatUint(hash, 10)
 }
 
 // parseTag split the string by ":" and return two strings

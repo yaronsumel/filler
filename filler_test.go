@@ -5,23 +5,20 @@ import (
 	"testing"
 )
 
-var demoFiller = Filler{
-	Tag: "demoFiller1",
-	Fn: func(obj interface{}) (interface{}, error) {
-		return "hello", nil
-	},
-}
+//go test -coverprofile cover.out && go tool cover -html=cover.out -o cover.html
 
-var errDemoFiller = Filler{
-	Tag: "demoFillerErr",
-	Fn: func(obj interface{}) (interface{}, error) {
-		return nil, errors.New("some error")
+var demoFiller = filler{
+	tag: "demoFiller1",
+	fn: func(obj interface{}) (interface{}, error) {
+		return "hello", nil
 	},
 }
 
 type demoStruct struct {
 	Name    string `fill:"demoFiller1:Val"`
 	Val     string `fill:"demoFiller2"`
+	Ptr     *string
+	XPtr    *string `fill:"fillPtr:Ptr"`
 	Ignore1 string `fill:"-"`
 	Ignore2 string `fill:""`
 }
@@ -36,18 +33,24 @@ type errFromFn struct {
 
 // RegFiller - register new filler into []fillers
 func TestRegFiller(t *testing.T) {
-	RegFiller(demoFiller)
-	v1, err1 := fillers[0].Fn("hello")
-	v2, err2 := demoFiller.Fn("hello")
-	if fillers[0].Tag != demoFiller.Tag || v1 != v2 || err1 != err2 {
+	RegFiller("demoFiller1", func(obj interface{}) (interface{}, error) {
+		return "hello", nil
+	})
+	v1, err1 := fillers[0].fn("hello")
+	v2, err2 := demoFiller.fn("hello")
+	if fillers[0].tag != demoFiller.tag || v1 != v2 || err1 != err2 {
 		t.FailNow()
 	}
 }
 
 // Fill - fill the object with all the current fillers
 func TestFill(t *testing.T) {
-	RegFiller(demoFiller)
-	RegFiller(errDemoFiller)
+	RegFiller("demoFiller1", func(obj interface{}) (interface{}, error) {
+		return "hello", nil
+	})
+	RegFiller("demoFillerErr", func(obj interface{}) (interface{}, error) {
+		return nil, errors.New("some error")
+	})
 	m := demoStruct{
 		Name: "nameVal",
 		Val:  "valVal",
