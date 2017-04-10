@@ -19,8 +19,8 @@ type demoStruct struct {
 	Val     string `fill:"demoFiller2"`
 	Ptr     *string
 	XPtr    *string `fill:"fillPtr:Ptr"`
-	Ignore1 string `fill:"-"`
-	Ignore2 string `fill:""`
+	Ignore1 string  `fill:"-"`
+	Ignore2 string  `fill:""`
 }
 
 type notSameTypeStruct struct {

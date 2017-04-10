@@ -31,7 +31,7 @@ type filler struct {
 }
 
 // RegFiller - register new filler into []fillers
-func RegFiller(name string,fn func(obj interface{}) (interface{}, error)) {
+func RegFiller(name string, fn func(obj interface{}) (interface{}, error)) {
 	mu.Lock()
 	fillers = append(fillers, &filler{
 		name,
@@ -62,7 +62,7 @@ func Fill(obj interface{}) error {
 					elmValue = s.FieldByName(elm).Interface()
 				}
 				// if fill got called more than once - will get called once per fillerTag+value
-				res, err := fillers[key].singleFlightGroup.Do(hash(filler.tag,elmValue), func() (interface{}, error) {
+				res, err := fillers[key].singleFlightGroup.Do(hash(filler.tag, elmValue), func() (interface{}, error) {
 					return filler.fn(elmValue)
 				})
 				if err != nil {
@@ -80,7 +80,7 @@ func Fill(obj interface{}) error {
 	return nil
 }
 
-func hash(name string,value interface{}) string {
+func hash(name string, value interface{}) string {
 	hash, err := hashstructure.Hash(value, nil)
 	if err != nil {
 		return name + strconv.FormatInt(int64(time.Now().Nanosecond()), 10)
